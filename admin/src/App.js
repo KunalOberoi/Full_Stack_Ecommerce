@@ -3,7 +3,7 @@ import Footer from "./Components/Footer/Footer";
 import Navbar from "./Components/Navbar/Navbar";
 import Admin from "./Pages/Admin";
 
-export const backend_url = "https://full-stack-ecommerce-backend-pa06.onrender.com";
+export const backend_url = "https://full-stack-ecommerce-rose-chi.vercel.app";
 export const currency = '₹';
 
 function App() {
