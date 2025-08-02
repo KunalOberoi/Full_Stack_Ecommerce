@@ -10,7 +10,11 @@ import men_banner from "./Components/Assets/banner_mens.png";
 import kid_banner from "./Components/Assets/banner_kids.png";
 import LoginSignup from "./Pages/LoginSignup";
 
+<<<<<<< HEAD
 export const backend_url = "https://ecommerce-jfdt.onrender.com";
+=======
+export const backend_url = "https://ecommerce-jfdt.onrender.com/";
+>>>>>>> 16c796b6dfbb815dbd36bfa0e199641319b3baff
 export const currency = '₹';
 
 function App() {
