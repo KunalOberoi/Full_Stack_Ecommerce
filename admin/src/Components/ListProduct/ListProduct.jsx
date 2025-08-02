@@ -10,6 +10,10 @@ const ListProduct = () => {
     fetch(`${backend_url}/allproducts`)
       .then((res) => res.json())
       .then((data) => setAllProducts(data))
+      .catch((error) => {
+        console.error('Error fetching products:', error);
+        alert('Error loading products. Please refresh the page.');
+      })
   }
 
   useEffect(() => {
@@ -25,8 +29,19 @@ const ListProduct = () => {
       },
       body: JSON.stringify({ id: id }),
     })
-
-    fetchInfo();
+    .then((resp) => resp.json())
+    .then((data) => {
+      if (data.success) {
+        alert('Product removed successfully');
+        fetchInfo();
+      } else {
+        alert('Failed to remove product');
+      }
+    })
+    .catch((error) => {
+      console.error('Error removing product:', error);
+      alert('Error removing product. Please try again.');
+    });
   }
 
   return (

@@ -8,9 +8,9 @@
 }
 .cartitems-format-main{
     display: grid;
-    grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 0.5fr 2fr 0.8fr 1fr 1fr 1fr 0.5fr;
     align-items: center;
-    gap: 50px;
+    gap: 20px;
     padding: 20px 0px;
     color: #454545;
     font-size: 16px;
@@ -23,6 +23,11 @@
 }
 .cartitems-product-icon{
     height: 55px;
+}
+.cartitems-size{
+    font-weight: 600;
+    color: #ff4141;
+    text-align: center;
 }
 .cartitems-remove-icon{
     width: 12px;

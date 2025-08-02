@@ -8,34 +8,66 @@ const CartItems = () => {
   const {products} = useContext(ShopContext);
   const {cartItems,removeFromCart,getTotalCartAmount} = useContext(ShopContext);
 
+  const getCartItemsWithDetails = () => {
+    const cartItemsArray = [];
+    
+    for (const cartKey in cartItems) {
+      if (cartItems[cartKey] > 0) {
+        const itemId = cartKey.includes('_') ? cartKey.split('_')[0] : cartKey;
+        const size = cartKey.includes('_') ? cartKey.split('_')[1] : '';
+        const product = products.find((p) => p.id === Number(itemId));
+        
+        if (product) {
+          cartItemsArray.push({
+            ...product,
+            cartKey,
+            size,
+            quantity: cartItems[cartKey]
+          });
+        }
+      }
+    }
+    
+    return cartItemsArray;
+  };
+
   return (
     <div className="cartitems">
       <div className="cartitems-format-main">
         <p>Products</p>
         <p>Title</p>
+        <p>Size</p>
         <p>Price</p>
         <p>Quantity</p>
         <p>Total</p>
         <p>Remove</p>
       </div>
       <hr />
-      {products.map((e)=>{
-
-        if(cartItems[e.id]>0)
-        {
-          return  <div>
-                    <div className="cartitems-format-main cartitems-format">
-                      <img className="cartitems-product-icon" src={backend_url+e.image} alt="" />
-                      <p cartitems-product-title>{e.name}</p>
-                      <p>{currency}{e.new_price}</p>
-                      <button className="cartitems-quantity">{cartItems[e.id]}</button>
-                      <p>{currency}{e.new_price*cartItems[e.id]}</p>
-                      <img onClick={()=>{removeFromCart(e.id)}} className="cartitems-remove-icon" src={cross_icon} alt="" />
-                    </div>
-                     <hr />
-                  </div>;
-        }
-        return null;
+      {getCartItemsWithDetails().map((item, index) => {
+        return (
+          <div key={item.cartKey || index}>
+            <div className="cartitems-format-main cartitems-format">
+              <img 
+                className="cartitems-product-icon" 
+                src={backend_url + item.image} 
+                alt="" 
+                onError={(e) => {e.target.src = '/images/placeholder.png'}}
+              />
+              <p className="cartitems-product-title">{item.name}</p>
+              <p className="cartitems-size">{item.size || 'N/A'}</p>
+              <p>{currency}{item.new_price}</p>
+              <button className="cartitems-quantity">{item.quantity}</button>
+              <p>{currency}{item.new_price * item.quantity}</p>
+              <img 
+                onClick={() => removeFromCart(item.id, item.size)} 
+                className="cartitems-remove-icon" 
+                src={cross_icon} 
+                alt="" 
+              />
+            </div>
+            <hr />
+          </div>
+        );
       })}
       
       <div className="cartitems-down">

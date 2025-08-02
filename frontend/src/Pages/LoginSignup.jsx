@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./CSS/LoginSignup.css";
+import { backend_url } from '../App';
 
 const LoginSignup = () => {
 
@@ -12,7 +13,7 @@ const LoginSignup = () => {
 
   const login = async () => {
     let dataObj;
-    await fetch('http://localhost:4000/login', {
+    await fetch(`${backend_url}/login`, {
       method: 'POST',
       headers: {
         Accept:'application/form-data',
@@ -21,21 +22,27 @@ const LoginSignup = () => {
       body: JSON.stringify(formData),
     })
       .then((resp) => resp.json())
-      .then((data) => {dataObj=data});
+      .then((data) => {dataObj=data})
+      .catch((error) => {
+        console.error('Error during login:', error);
+        alert('Network error. Please try again.');
+        return;
+      });
+      
       console.log(dataObj);
-      if (dataObj.success) {
+      if (dataObj && dataObj.success) {
         localStorage.setItem('auth-token',dataObj.token);
         window.location.replace("/");
       }
       else
       {
-        alert(dataObj.errors)
+        alert(dataObj?.errors || 'Login failed')
       }
   }
 
   const signup = async () => {
     let dataObj;
-    await fetch('http://localhost:4000/signup', {
+    await fetch(`${backend_url}/signup`, {
       method: 'POST',
       headers: {
         Accept:'application/form-data',
@@ -44,15 +51,20 @@ const LoginSignup = () => {
       body: JSON.stringify(formData),
     })
       .then((resp) => resp.json())
-      .then((data) => {dataObj=data});
+      .then((data) => {dataObj=data})
+      .catch((error) => {
+        console.error('Error during signup:', error);
+        alert('Network error. Please try again.');
+        return;
+      });
 
-      if (dataObj.success) {
+      if (dataObj && dataObj.success) {
         localStorage.setItem('auth-token',dataObj.token);
         window.location.replace("/");
       }
       else
       {
-        alert(dataObj.errors)
+        alert(dataObj?.errors || 'Signup failed')
       }
   }
 

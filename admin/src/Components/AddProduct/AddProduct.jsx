@@ -30,9 +30,14 @@ const AddProduct = () => {
       },
       body: formData,
     }).then((resp) => resp.json())
-      .then((data) => { dataObj = data });
+      .then((data) => { dataObj = data })
+      .catch((error) => {
+        console.error('Error uploading image:', error);
+        alert('Error uploading image. Please try again.');
+        return;
+      });
 
-    if (dataObj.success) {
+    if (dataObj && dataObj.success) {
       product.image = dataObj.image_url;
       await fetch(`${backend_url}/addproduct`, {
         method: 'POST',
@@ -43,7 +48,11 @@ const AddProduct = () => {
         body: JSON.stringify(product),
       })
         .then((resp) => resp.json())
-        .then((data) => { data.success ? alert("Product Added") : alert("Failed") });
+        .then((data) => { data.success ? alert("Product Added") : alert("Failed") })
+        .catch((error) => {
+          console.error('Error adding product:', error);
+          alert('Error adding product. Please try again.');
+        });
 
     }
   }

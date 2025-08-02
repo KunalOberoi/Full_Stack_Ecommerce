@@ -21,6 +21,7 @@ const ShopContextProvider = (props) => {
     fetch(`${backend_url}/allproducts`)
       .then((res) => res.json())
       .then((data) => setProducts(data))
+      .catch((error) => console.error('Error fetching products:', error))
 
     if (localStorage.getItem("auth-token")) {
       fetch(`${backend_url}/getcart`, {
@@ -33,7 +34,8 @@ const ShopContextProvider = (props) => {
         body: JSON.stringify(),
       })
         .then((resp) => resp.json())
-        .then((data) => { setCartItems(data) });
+        .then((data) => { setCartItems(data) })
+        .catch((error) => console.error('Error fetching cart:', error));
     }
   }, [])
 
@@ -42,8 +44,11 @@ const ShopContextProvider = (props) => {
     for (const item in cartItems) {
       if (cartItems[item] > 0) {
         try {
-          let itemInfo = products.find((product) => product.id === Number(item));
-          totalAmount += cartItems[item] * itemInfo.new_price;
+          const itemId = item.includes('_') ? item.split('_')[0] : item;
+          let itemInfo = products.find((product) => product.id === Number(itemId));
+          if (itemInfo) {
+            totalAmount += cartItems[item] * itemInfo.new_price;
+          }
         } catch (error) {}
       }
     }
@@ -55,7 +60,8 @@ const ShopContextProvider = (props) => {
     for (const item in cartItems) {
       if (cartItems[item] > 0) {
         try {
-          let itemInfo = products.find((product) => product.id === Number(item));
+          const itemId = item.includes('_') ? item.split('_')[0] : item;
+          let itemInfo = products.find((product) => product.id === Number(itemId));
           totalItem += itemInfo ? cartItems[item] : 0 ;
         } catch (error) {}
       }
@@ -63,12 +69,15 @@ const ShopContextProvider = (props) => {
     return totalItem;
   };
 
-  const addToCart = (itemId) => {
+  const addToCart = (itemId, size = "") => {
     if (!localStorage.getItem("auth-token")) {
       alert("Please Login");
       return;
     }
-    setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
+    
+    const cartKey = size ? `${itemId}_${size}` : itemId;
+    setCartItems((prev) => ({ ...prev, [cartKey]: (prev[cartKey] || 0) + 1 }));
+    
     if (localStorage.getItem("auth-token")) {
       fetch(`${backend_url}/addtocart`, {
         method: 'POST',
@@ -77,13 +86,15 @@ const ShopContextProvider = (props) => {
           'auth-token': `${localStorage.getItem("auth-token")}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ "itemId": itemId }),
+        body: JSON.stringify({ "itemId": itemId, "size": size }),
       })
     }
   };
 
-  const removeFromCart = (itemId) => {
-    setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
+  const removeFromCart = (itemId, size = "") => {
+    const cartKey = size ? `${itemId}_${size}` : itemId;
+    setCartItems((prev) => ({ ...prev, [cartKey]: Math.max((prev[cartKey] || 0) - 1, 0) }));
+    
     if (localStorage.getItem("auth-token")) {
       fetch(`${backend_url}/removefromcart`, {
         method: 'POST',
@@ -92,7 +103,7 @@ const ShopContextProvider = (props) => {
           'auth-token': `${localStorage.getItem("auth-token")}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ "itemId": itemId }),
+        body: JSON.stringify({ "itemId": itemId, "size": size }),
       })
     }
   };

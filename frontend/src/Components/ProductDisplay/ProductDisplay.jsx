@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import "./ProductDisplay.css";
 import star_icon from "../Assets/star_icon.png";
 import star_dull_icon from "../Assets/star_dull_icon.png";
@@ -8,18 +8,33 @@ import { backend_url, currency } from "../../App";
 const ProductDisplay = ({product}) => {
 
   const {addToCart} = useContext(ShopContext);
+  const [selectedSize, setSelectedSize] = useState("");
+
+  const sizes = ["S", "M", "L", "XL", "XXL"];
+
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size);
+  };
+
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      alert("Please select a size");
+      return;
+    }
+    addToCart(product.id, selectedSize);
+  };
 
   return (
     <div className="productdisplay">
       <div className="productdisplay-left">
         <div className="productdisplay-img-list">
-          <img src={backend_url + product.image} alt="img" />
-          <img src={backend_url + product.image} alt="img" />
-          <img src={backend_url + product.image} alt="img" />
-          <img src={backend_url + product.image} alt="img" />
+          <img src={backend_url + product.image} alt="img" onError={(e) => {e.target.style.display = 'none'}} />
+          <img src={backend_url + product.image} alt="img" onError={(e) => {e.target.style.display = 'none'}} />
+          <img src={backend_url + product.image} alt="img" onError={(e) => {e.target.style.display = 'none'}} />
+          <img src={backend_url + product.image} alt="img" onError={(e) => {e.target.style.display = 'none'}} />
         </div>
         <div className="productdisplay-img">
-          <img className="productdisplay-main-img" src={backend_url + product.image} alt="img" />
+          <img className="productdisplay-main-img" src={backend_url + product.image} alt="img" onError={(e) => {e.target.style.display = 'none'}} />
         </div>
       </div>
       <div className="productdisplay-right">
@@ -42,14 +57,18 @@ const ProductDisplay = ({product}) => {
         <div className="productdisplay-right-size">
           <h1>Select Size</h1>
           <div className="productdisplay-right-sizes">
-            <div>S</div>
-            <div>M</div>
-            <div>L</div>
-            <div>XL</div>
-            <div>XXL</div>
+            {sizes.map((size) => (
+              <div 
+                key={size}
+                className={`size-option ${selectedSize === size ? 'selected' : ''}`}
+                onClick={() => handleSizeSelect(size)}
+              >
+                {size}
+              </div>
+            ))}
           </div>
         </div>
-        <button onClick={()=>addToCart(product.id)}>ADD TO CART</button>
+        <button onClick={handleAddToCart}>ADD TO CART</button>
         <p className="productdisplay-right-category"><span>Category :</span> Women, T-shirt, Crop Top</p>
         <p className="productdisplay-right-category"><span>Tags :</span> Modern, Latest</p>
       </div>
