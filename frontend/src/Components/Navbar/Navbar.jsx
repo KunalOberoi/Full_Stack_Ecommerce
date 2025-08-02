@@ -32,6 +32,18 @@ const Navbar = () => {
         <li onClick={()=>{setMenu("kids")}}><Link to='/kids' style={{ textDecoration: 'none' }}>Kids</Link>{menu==="kids"?<hr/>:<></>}</li>
       </ul>
       <div className="nav-login-cart">
+        <a 
+          href="https://full-stack-ecommerce-u8b4.vercel.app/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="admin-panel-link"
+          title="Open Admin Panel in new tab"
+        >
+          <button className="admin-panel-btn">
+            <span className="admin-icon">⚙️</span>
+            Admin
+          </button>
+        </a>
         {localStorage.getItem('auth-token')
         ?<button onClick={()=>{localStorage.removeItem('auth-token');window.location.replace("/");}}>Logout</button>
         :<Link to='/login' style={{ textDecoration: 'none' }}><button>Login</button></Link>}
